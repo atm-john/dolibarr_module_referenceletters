@@ -491,7 +491,15 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		//return pdf_pagefoot($pdf,$outputlangs,'',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		// Logo en haut à gauche
+		$logo=$conf->mycompany->dir_output.'/logos/footer.jpg';
+		
+		if (is_readable($logo))
+		{
+			$heightLogo=pdf_getHeightForLogo($logo);
+			$pdf->Image($logo,  $this->marge_gauche, $this->page_hauteur-$heightLogo-10, 0, 0, '', '', '', false, 300, '', false, false, 0, false, false, true);	// width=0 (auto)
+		}
 	}
 
 }
