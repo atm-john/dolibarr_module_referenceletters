@@ -74,8 +74,8 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-		$this->marge_gauche=isset($conf->global->MAIN_PDF_MARGIN_LEFT)?$conf->global->MAIN_PDF_MARGIN_LEFT:10;
-		$this->marge_droite=isset($conf->global->MAIN_PDF_MARGIN_RIGHT)?$conf->global->MAIN_PDF_MARGIN_RIGHT:10;
+		$this->marge_gauche=30;
+		$this->marge_droite=30;
 		$this->marge_haute =isset($conf->global->MAIN_PDF_MARGIN_TOP)?$conf->global->MAIN_PDF_MARGIN_TOP:10;
 		$this->marge_basse =isset($conf->global->MAIN_PDF_MARGIN_BOTTOM)?$conf->global->MAIN_PDF_MARGIN_BOTTOM:10;
 
@@ -326,7 +326,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		/*$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))
@@ -348,7 +348,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
-		$pdf->SetFont('','B',$default_font_size + 3);
+		/*$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$title=$outputlangs->convToOutputCharset($instance_letter->title);
@@ -408,16 +408,16 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}*/
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
+		 	//$carac_emetteur .= pdf_build_address($outputlangs,$this->emetteur);
 
 			// Show sender
-			$posy=42;
+			/*$posy=42;
 		 	$posx=$this->marge_gauche;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
-			$hautcadre=40;
+			$hautcadre=40;*/
 
 			// Show sender frame
-			$pdf->SetTextColor(0,0,0);
+			/*$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx,$posy-5);
 			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":", 0, 'L');
@@ -430,7 +430,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
 			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy=$pdf->getY();
+			$posy=$pdf->getY();*/
 
 			// Show sender information
 			$pdf->SetXY($posx+2,$posy);
@@ -460,21 +460,21 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,$object,1,'target');
 
 			// Show recipient
 			$widthrecbox=100;
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
 			$posy=42;
-			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
-			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox+20;
+			//if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posx+2,$posy-5);
-			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+			//$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
+			//$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
@@ -501,7 +501,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		/*global $conf,$langs,$mysoc;
+		global $conf,$langs,$mysoc;
 		
 		//return pdf_pagefoot($pdf,$outputlangs,'',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
 		// Logo en haut à gauche
@@ -511,7 +511,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		{
 			$heightLogo=pdf_getHeightForLogo($logo);
 			$pdf->Image($logo,  $this->marge_gauche, $this->page_hauteur-$heightLogo-10, 0, 0, '', '', '', false, 300, '', false, false, 0, false, false, true);	// width=0 (auto)
-		}*/
+		}
 	}
 
 }
