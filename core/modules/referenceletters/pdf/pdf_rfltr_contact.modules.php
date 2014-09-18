@@ -307,6 +307,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		global $conf,$langs;
 
 		$outputlangs->load("main");
+		$outputlangs->load("dict");
 		$outputlangs->load("bills");
 		$outputlangs->load("propal");
 		$outputlangs->load("companies");
@@ -325,7 +326,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+		/*$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))
@@ -393,7 +394,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		$posy+=2;
 
 		// Show list of linked objects
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);*/
 
 		if ($showaddress)
 		{
@@ -500,6 +501,8 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
+		/*global $conf,$langs,$mysoc;
+		
 		//return pdf_pagefoot($pdf,$outputlangs,'',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
 		// Logo en haut à gauche
 		$logo=$conf->mycompany->dir_output.'/logos/footer.jpg';
@@ -508,7 +511,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		{
 			$heightLogo=pdf_getHeightForLogo($logo);
 			$pdf->Image($logo,  $this->marge_gauche, $this->page_hauteur-$heightLogo-10, 0, 0, '', '', '', false, 300, '', false, false, 0, false, false, true);	// width=0 (auto)
-		}
+		}*/
 	}
 
 }
