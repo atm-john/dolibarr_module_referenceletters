@@ -326,13 +326,14 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		$pdf->SetXY($this->marge_gauche,$posy);
 
 		// Logo
-		$logo=$conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
+		$logo=$conf->mycompany->dir_output.'/logos/logoAKTEOS_sansBaseline.jpg';
 		if ($this->emetteur->logo)
 		{
 			if (is_readable($logo))
 			{
 			    $height=pdf_getHeightForLogo($logo);
-			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height);	// width=0 (auto)
+			    $pdf->SetXY(5,$posy);
+			    $pdf->Image($logo, 10, $posy, 0, 34);	// width=0 (auto)
 			}
 			else
 			{
@@ -347,6 +348,9 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 			$text=$this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
+		
+		$pdf->SetXY($this->marge_gauche,$posy);
+		
 
 		/*$pdf->SetFont('','B',$default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
@@ -434,7 +438,7 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 
 			// Show sender information
 			$pdf->SetXY($posx+2,$posy);
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetFont('','', $default_font_size);
 			$pdf->MultiCell(80, 4, $carac_emetteur, 0, 'L');
 
 
@@ -471,18 +475,18 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
-			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetFont('','', $default_font_size+1);
 			$pdf->SetXY($posx+2,$posy-5);
 			//$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("BillTo").":", 0, 'L');
 			//$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
-			$pdf->SetFont('','B', $default_font_size);
+			$pdf->SetFont('','B', $default_font_size+1);
 			$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, 'L');
 
 			// Show recipient information
-			$pdf->SetFont('','', $default_font_size - 1);
+			$pdf->SetFont('','', $default_font_size+1);
 			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
@@ -510,7 +514,8 @@ class pdf_rfltr_contact extends ModelePDFReferenceLetters
 		if (is_readable($logo))
 		{
 			$heightLogo=pdf_getHeightForLogo($logo);
-			$pdf->Image($logo,  $this->marge_gauche, $this->page_hauteur-$heightLogo-10, 0, 0, '', '', '', false, 300, '', false, false, 0, false, false, true);	// width=0 (auto)
+			//$pdf->Image($logo,  $this->marge_gauche, $this->page_hauteur-$heightLogo-10, 0, 40, '', '', '', false, 300, '', false, false, 0, false, false, true);	// width=0 (auto)
+			$pdf->Image($logo,  5, $this->page_hauteur-$heightLogo-15, 0, 19);	// width=0 (auto)
 		}
 	}
 
