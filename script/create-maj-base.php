@@ -1,48 +1,62 @@
 <?php
+if (is_file('../main.inc.php'))
+	$dir = '../';
+else if (is_file('../../../main.inc.php'))
+	$dir = '../../../';
+else
+	$dir = '../../';
 
-if(is_file('../main.inc.php'))$dir = '../';
-else  if(is_file('../../../main.inc.php'))$dir = '../../../';
-else $dir = '../../';
-
-if(!defined('INC_FROM_DOLIBARR') && defined('INC_FROM_CRON_SCRIPT')) {
-	include($dir."master.inc.php");
-}
-elseif(!defined('INC_FROM_DOLIBARR')) {
-	include($dir."main.inc.php");
+if (! defined('INC_FROM_DOLIBARR') && defined('INC_FROM_CRON_SCRIPT')) {
+	include ($dir . "master.inc.php");
+} elseif (! defined('INC_FROM_DOLIBARR')) {
+	include ($dir . "main.inc.php");
 } else {
 	global $dolibarr_main_db_host, $dolibarr_main_db_name, $dolibarr_main_db_user, $dolibarr_main_db_pass;
 }
-if(!defined('DB_HOST')) {
-	define('DB_HOST',$dolibarr_main_db_host);
-	define('DB_NAME',$dolibarr_main_db_name);
-	define('DB_USER',$dolibarr_main_db_user);
-	define('DB_PASS',$dolibarr_main_db_pass);
-	define('DB_DRIVER',$dolibarr_main_db_type);
+if (! defined('DB_HOST')) {
+	define('DB_HOST', $dolibarr_main_db_host);
+	define('DB_NAME', $dolibarr_main_db_name);
+	define('DB_USER', $dolibarr_main_db_user);
+	define('DB_PASS', $dolibarr_main_db_pass);
+	define('DB_DRIVER', $dolibarr_main_db_type);
 }
 
 dol_include_once('/referenceletters/class/referenceletters.class.php');
 dol_include_once('/referenceletters/class/referenceletterschapters.class.php');
 
-global $db,$langs,$reinstalltemplate;
+global $db, $langs, $reinstalltemplate;
 
 $langs->load('referenceletters@referenceletters');
 
 $rfltr = new ReferenceLetters($db);
 
-
-/***********************************/
-/************* Propal **************/
-/***********************************/
+/**
+ * ********************************
+ */
+/**
+ * *********** Propal *************
+ */
+/**
+ * ********************************
+ */
 
 $title = $langs->transnoentities('RefLtrPropal');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
@@ -78,9 +92,11 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
-
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $this->errors, 'errors');
+	}
 	// Instanciation du contenu
-	if(!empty($id_rfltr)) {
+	if (! empty($id_rfltr)) {
 
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
@@ -195,23 +211,33 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 		</tr>
 	</tbody>
 </table>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
 
-
-/************************************/
-/************* Facture **************/
-/************************************/
+//
+// *********** Facture *************
+//
 $title = $langs->transnoentities('RefLtrInvoice');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
@@ -246,9 +272,11 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
 
-	// Instanciation du contenu
-	if(!empty($id_rfltr)) {
+		// Instanciation du contenu
 
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
@@ -373,25 +401,37 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 		</tr>
 	</tbody>
 </table>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
 
-
-/************* Commande **************/
+//
+// *********** Commande *************
+//
 $title = $langs->transnoentities('RefLtrOrder');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
-	$rfltr->element_type ='order';
+	$rfltr->element_type = 'order';
 	$rfltr->status = 0;
 	$rfltr->fk_user_author = $user->id;
 	$rfltr->datec = dol_now();
@@ -420,9 +460,10 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
-
-	// Instanciation du contenu
-	if(!empty($id_rfltr)) {
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
+		// Instanciation du contenu
 
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
@@ -516,21 +557,33 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 		</tr>
 	</tbody>
 </table>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
 
-
-/************* Contrat **************/
+//
+// *********** Contrat *************
+//
 $title = $langs->transnoentities('RefLtrContract');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
@@ -563,9 +616,10 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
-
-	// Instanciation du contenu
-	if(!empty($id_rfltr)) {
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
+		// Instanciation du contenu
 
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
@@ -663,20 +717,33 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 		</tr>
 	</tbody>
 </table>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
 
-/************* price request **************/
+//
+// *********** price request *************
+//
 $title = $langs->transnoentities('RefLtrSupplierProposals');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
@@ -709,9 +776,10 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
-
-	// Instanciation du contenu
-	if(!empty($id_rfltr)) {
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
+		// Instanciation du contenu
 
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
@@ -793,24 +861,37 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 		</tr>
 	</tbody>
 </table>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
 
-/************** Supplier order **************/
+//
+// ************ Supplier order *************
+//
 $title = $langs->transnoentities('RefLtrSupplierOrders');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
-	$rfltr->element_type ='order_supplier';
+	$rfltr->element_type = 'order_supplier';
 	$rfltr->status = 0;
 	$rfltr->fk_user_author = $user->id;
 	$rfltr->datec = dol_now();
@@ -841,9 +922,11 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
 
-	// Instanciation du contenu
-	if(!empty($id_rfltr)) {
+		// Instanciation du contenu
 
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
@@ -937,22 +1020,33 @@ NAF-APE :&nbsp;{mycompany_idprof3} - Num VA :&nbsp;{mycompany_vatnumber}</span><
 		</tr>
 	</tbody>
 </table>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
 
-/**
- * *********** Document exemple Agefodd *************
- */
+//
+// *********** Document exemple Agefodd *************
+//
 $title = $langs->trans('RefLtrAgefodd');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if ($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
@@ -962,22 +1056,33 @@ if ($rfltr->fetch('', $title) <= 0) {
 	$rfltr->datec = dol_now();
 	$rfltr->fk_user_mod = $obj->fk_user_mod;
 	$rfltr->tms = dol_now();
-	$rfltr->header = '<div style="text-align:center"><br />
-<span style="font-size:10px"><strong>ENTETE<br />
-PERSONNALISE</strong></span><br />
-&nbsp;</div>';
-	$rfltr->footer = '<div style="text-align:center"><em>PIED DE PAGE PERSONNALISE</em><br />
-<br />
-<br />
+	$rfltr->header = '<table border="0" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td style="width:400px"><span style="font-size:9px"><strong>{mycompany_name}</strong><br />
+			{mycompany_address}<br />
+			{mycompany_zip}&nbsp;{mycompany_town}<br />
+			T&eacute;l. : {mycompany_phone} - Fax :&nbsp;{mycompany_fax}<br />
+			Email : {mycompany_email}<br />
+			Web :&nbsp;{mycompany_web}<br />
+			Formation / Session : {formation_ref}/ {objvar_object_ref}<br />
+			Date : {objvar_object_date_text}</span></td>
+			<td>YOUR LOGO</td>
+		</tr>
+	</tbody>
+</table>';
+	$rfltr->footer = '<hr /><div style="text-align:center"><span style="color:#95a5a6"><span style="font-size:6px">{mycompany_name} {mycompany_address} -&nbsp; {mycompany_zip}&nbsp;{mycompany_town} - T&eacute;l. : {mycompany_phone} - mail : {mycompany_email} - {mycompany_juridicalstatus} - Capital de {mycompany_capital} SIRET :&nbsp;{mycompany_idprof2}<br />
+NAF-APE :&nbsp;{mycompany_idprof3} -&nbsp; N&deg; d&eacute;claration d&#39;activit&eacute; (ce num&eacute;ro ne vaut pas agr&eacute;ment de l&#39;&eacute;tat) {__[AGF_ORGANISME_NUM]__} &nbsp; - pr&eacute;fecture {__[AGF_ORGANISME_PREF]__} &nbsp;Num VA :&nbsp;{mycompany_vatnumber}</span></span><br />
 <br />
 &nbsp;</div>';
 	$rfltr->use_custom_footer = 1;
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
-
-	// Instanciation du contenu
-	if (! empty($id_rfltr)) {
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
+		// Instanciation du contenu
 
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
@@ -997,6 +1102,8 @@ Type de participant : <strong>{formation_type_stagiaire}</strong><br />
 Programme : <strong>{formation_programme}</strong><br />
 Documents necessaires : <strong>{formation_documents}</strong><br />
 Equipement necessaire : <strong>{formation_equipements}</strong><br />
+Référence : <strong>{formation_ref}</strong><br />
+Référence Interne : <strong>{formation_refint}</strong><br />
 Objectif de formation text : <strong>{formation_obj_peda}</strong><br />
 Tableau des objectifs :<br />
 [!-- BEGIN TFormationObjPeda --] Priorit&eacute;/Rang : <strong>{line_objpeda_rang}, </strong>Description : <strong>{line_objpeda_description}</strong><br />
@@ -1011,6 +1118,7 @@ Commentaire Lieu : <strong>{formation_lieu_notes}</strong><br />
 <br />
 <u>Session : </u><br />
 Id Session : <strong>{objvar_object_id}</strong><br />
+Ref Session : <strong>{objvar_object_ref}</strong><br />
 Client :<strong> {formation_societe} </strong>(Intra)<br />
 Commenatire session : <strong>{formation_commentaire}</strong><br />
 Date : du <strong>{formation_date_debut}</strong> au&nbsp;<strong>{formation_date_fin}</strong><br />
@@ -1165,7 +1273,7 @@ ou en une ligne : <strong>{objvar_object_trainer_text}</strong><br />
 Cout formateur (cout/nb de creneaux): <strong>{objvar_object_trainer_day_cost}</strong><br />
 D&eacute;tail par formateur<span style="color:#ff0000"> (disponible uniquement sur contrat formateur)</span> :<br />
 <br />
-<strong>{objvar_object_formateur_session_name}&nbsp;{objvar_object_formateur_session_firstname}<br />
+<strong>{objvar_object_formateur_session_lastname}&nbsp;{objvar_object_formateur_session_firstname}<br />
 {objvar_object_formateur_session_address}<br />
 {objvar_object_formateur_session_zip}&nbsp;{objvar_object_formateur_session_town}</strong><br />
 Siret : <strong>{objvar_object_formateur_session_societe_idprof2}</strong><br />
@@ -1177,7 +1285,10 @@ Horaire du formateur dans la session sans heure :{trainer_datetextline}
 <br />
 Repr&eacute;sentant Agefodd : <strong>{objvar_object_AGF_ORGANISME_REPRESENTANT}</strong> Numero de d&eacute;claration : <strong>{objvar_object_AGF_ORGANISME_NUM}</strong> Prefecture : <strong>{objvar_object_AGF_ORGANISME_PREF}</strong>';
 
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 
 		unset($chapter);
 		$chapter = new ReferenceLettersChapters($db);
@@ -1210,22 +1321,33 @@ Saut de page dans une boucle (ex: un stagiaire PRESENT ou PARTIELLEMENT par page
 [!-- END TStagiairesSessionPresent --]
 ';
 
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
 
 /**
- * *********** Document exemple Agefodd *************
+ * *********** Document exemple convention Agefodd *************
  */
 $title = $langs->trans('RefLtrAgefoddConvention');
 if ($reinstalltemplate) {
-	$rfltr->fetch('', $title);
-	$result=$rfltr->delete($user);
-	if ($result<0) {
-		setEventMessages(null,$rfltr->errors,'errors');
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
 	}
 }
-if ($rfltr->fetch('', $title) <= 0) {
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
 	$rfltr->entity = $conf->entity;
 	$rfltr->title = $title;
 	$rfltr->element_type = 'rfltr_agefodd_convention';
@@ -1262,9 +1384,10 @@ if ($rfltr->fetch('', $title) <= 0) {
 	$rfltr->use_landscape_format = 0;
 
 	$id_rfltr = $rfltr->create($user);
-
-	// Instanciation du contenu
-	if (! empty($id_rfltr)) {
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
+		// Instanciation du contenu
 		$chapter = new ReferenceLettersChapters($db);
 		$chapter->entity = $conf->entity;
 		$chapter->fk_referenceletters = $id_rfltr;
@@ -1299,7 +1422,10 @@ Du {formation_date_debut} au&nbsp;{formation_date_fin}</span></span><br />
 {objvar_object_document_societe_address}<br />
 {objvar_object_document_societe_zip} {objvar_object_document_societe_town}<br />
 Repr&eacute;sent&eacute;e par {objvar_object_signataire_intra}</span></span></div>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 
 		unset($chapter);
 		$chapter = new ReferenceLettersChapters($db);
@@ -1344,7 +1470,10 @@ Cf. annexe 1 (Programme de formation)<br />
 L&#39;organisme formera les participants :<br />
 [!-- BEGIN TStagiairesSessionConvention --]- {line_nom}&nbsp;{line_prenom}<br />
 [!-- END TStagiairesSessionConvention --]</span>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 
 		unset($chapter);
 		$chapter = new ReferenceLettersChapters($db);
@@ -1440,6 +1569,224 @@ Ce document comporte trois (3) pages.<br />
 <div style="text-align:center"><span style="font-size:8px">(*) Faire pr&eacute;c&eacute;der la signature de la mention &laquo; lu et approuv&eacute; &raquo; apr&egrave;s avoir paraph&eacute; chaque page de la pr&eacute;sente convention.</span></div>
 
 <div style="text-align:center">&nbsp;</div>';
-		$chapter->create($user);
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
 	}
 }
+
+/**
+ * *********** Document exemple Feuille présence vide Agefodd *************
+ */
+$title = $langs->trans('RefLtrAgefoddFichePresence');
+if ($reinstalltemplate) {
+	$result = $rfltr->fetch('', $title);
+	if ($result > 0) {
+		$result = $rfltr->delete($user);
+		if ($result < 0) {
+			setEventMessages(null, $rfltr->errors, 'errors');
+		}
+	} elseif ($result < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	}
+}
+$result = $rfltr->fetch('', $title);
+if ($result < 0) {
+	setEventMessages(null, $rfltr->errors, 'errors');
+}
+if ($result == 0) {
+	$rfltr->entity = $conf->entity;
+	$rfltr->title = $title;
+	$rfltr->element_type = 'rfltr_agefodd_fiche_presence_empty';
+	$rfltr->status = 0;
+	$rfltr->fk_user_author = $user->id;
+	$rfltr->datec = dol_now();
+	$rfltr->fk_user_mod = $obj->fk_user_mod;
+	$rfltr->tms = dol_now();
+	$rfltr->header = '<table border="0" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td style="width:400px"><span style="font-size:9px"><strong>{mycompany_name}</strong><br />
+			{mycompany_address}<br />
+			{mycompany_zip}&nbsp;{mycompany_town}<br />
+			T&eacute;l. : {mycompany_phone} - Fax :&nbsp;{mycompany_fax}<br />
+			Email : {mycompany_email}<br />
+			Web :&nbsp;{mycompany_web}<br />
+			Formation / Session : {formation_ref}/ {objvar_object_ref}<br />
+			Date : {objvar_object_date_text}</span></td>
+			<td>YOUR LOGO</td>
+		</tr>
+	</tbody>
+</table>';
+	$rfltr->footer = '<hr />
+<div style="text-align:center"><span style="color:#95a5a6"><span style="font-size:6px">{mycompany_name} {mycompany_address} -&nbsp; {mycompany_zip}&nbsp;{mycompany_town} - T&eacute;l. : {mycompany_phone} - mail : {mycompany_email} - {mycompany_juridicalstatus} - Capital de {mycompany_capital} SIRET :&nbsp;{mycompany_idprof2}<br />
+NAF-APE :&nbsp;{mycompany_idprof3} -&nbsp; N&deg; d&eacute;claration d&#39;activit&eacute; (ce num&eacute;ro ne vaut pas agr&eacute;ment de l&#39;&eacute;tat) {__[AGF_ORGANISME_NUM]__} &nbsp; - pr&eacute;fecture {__[AGF_ORGANISME_PREF]__} &nbsp;Num VA :&nbsp;{mycompany_vatnumber}</span></span><br />
+<br />
+&nbsp;</div>';
+	$rfltr->use_custom_footer = 1;
+	$rfltr->use_custom_header = 1;
+	$rfltr->use_landscape_format = 0;
+
+	$id_rfltr = $rfltr->create($user);
+	if ($id_rfltr < 0) {
+		setEventMessages(null, $rfltr->errors, 'errors');
+	} else {
+		// Instanciation du contenu
+		$chapter = new ReferenceLettersChapters($db);
+		$chapter->entity = $conf->entity;
+		$chapter->fk_referenceletters = $id_rfltr;
+		$chapter->lang = 'fr_FR';
+		$chapter->sort_order = 1;
+		$chapter->fk_user_author = $chapter->fk_user_mod = $user->id;
+		$chapter->title = 'Page titre';
+		$chapter->content_text = '<div style="text-align:center"><br />
+<br />
+<span style="font-size:20px"><strong>Feuille d&#39;&eacute;margement</strong></span><br />
+&nbsp;
+<div>Nous, &laquo; {mycompany_name} &raquo;,demeurant {mycompany_address} {mycompany_zip}&nbsp;{mycompany_town}, repr&eacute;sent&eacute;s par {__[AGF_ORGANISME_REPRESENTANT]__} ,</div>
+</div>
+
+<div>attestons par la pr&eacute;sente de la r&eacute;alit&eacute; des informations port&eacute;es ci-dessous &agrave; votre connaissance.</div>
+
+<div style="text-align:left"><br />
+<strong>La formation</strong></div>
+
+<table border="0.5" cellpadding="1" cellspacing="1" style="width:540px">
+	<tbody>
+		<tr>
+			<td>
+			<table border="0" cellpadding="1" cellspacing="1" style="width:540px">
+				<tbody>
+					<tr>
+						<td>
+						<div>Intitul&eacute; : <strong>{formation_nom}</strong></div>
+
+						<div>P&eacute;riode : {objvar_object_date_text} ({formation_duree_session}h)</div>
+						</td>
+						<td>Lieu de formation : {formation_lieu}<br />
+						{formation_lieu_adresse}&nbsp;{formation_lieu_cp}&nbsp;{formation_lieu_ville}</td>
+					</tr>
+				</tbody>
+			</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+&nbsp;
+
+<div style="text-align:left"><br />
+<strong>Le(s)/</strong><strong>La formateur/trice(s)</strong></div>
+
+<table border="0.5" cellpadding="1" cellspacing="1" style="width:540px">
+	<tbody>
+		<tr>
+			<td style="width:100px">Nom et pr&eacute;nom</td>
+			<td style="width:440px">
+			<div style="text-align:center">Signature<br />
+			<span style="font-size:8px"><em>atteste(nt) par la(les) signature(s) avoir dispens&eacute; la formation ci-dessus nomm&eacute;e.</em></span></div>
+
+			<table border="0.5" cellpadding="1" cellspacing="1" style="width:440px">
+				<tbody>
+					<tr>
+						<td style="text-align:left">Date:</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td style="text-align:left">Heure :</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+				</tbody>
+			</table>
+			[!-- BEGIN TFormateursSession --]</td>
+		</tr>
+		<tr>
+			<td>{line_formateur_nom} {line_formateur_prenom}</td>
+			<td>
+			<table border="0.5" cellpadding="1" cellspacing="1" style="width:440px">
+				<tbody>
+					<tr>
+						<td style="height:27px">&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+				</tbody>
+			</table>
+			[!-- END TFormateursSession --]</td>
+		</tr>
+	</tbody>
+</table>
+&nbsp;
+
+<div style="text-align:left"><br />
+<strong>Le(s)/ La participant(e(s))</strong></div>
+
+<table border="0.5" cellpadding="1" cellspacing="1" style="width:540px">
+	<tbody>
+		<tr>
+			<td style="width:100px">Nom et pr&eacute;nom</td>
+			<td style="width:440px">
+			<div style="text-align:center">Signature<br />
+			<span style="font-size:8px"><em>atteste(nt) par la(les) signature(s) avoir re&ccedil;u la formation ci-dessus nomm&eacute;e</em></span></div>
+
+			<table border="0.5" cellpadding="1" cellspacing="1" style="width:440px">
+				<tbody>
+					<tr>
+						<td style="text-align:left">Date:</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td style="text-align:left">Heure :</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+				</tbody>
+			</table>
+			[!-- BEGIN TStagiairesSession --]</td>
+		</tr>
+		<tr>
+			<td>{line_nom} {line_prenom}<br />
+			({line_nom_societe})</td>
+			<td>
+			<table border="0.5" style="width:440px">
+				<tbody>
+					<tr>
+						<td style="height:27px">&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tr>
+				</tbody>
+			</table>
+			[!-- END TStagiairesSession --]</td>
+		</tr>
+	</tbody>
+</table>
+&nbsp;';
+		$result = $chapter->create($user);
+		if ($result < 0) {
+			setEventMessages(null, $chapter->errors, 'errors');
+		}
+	}
+}
+
