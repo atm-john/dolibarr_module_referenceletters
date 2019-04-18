@@ -268,42 +268,65 @@ class FormReferenceLetters extends Form
         global $langs,$bc;
 
 
+        $langs->load("refflettersubstitution@referenceletters");
+
         $subs_array=$reflettersobject->getSubstitutionKey($user);
 
-        $html='<table id="refltertags" >';
+        $html='<div id="refltertags" >';
+        $html.='<div id="accordion-refltertags" >';
 
         if (is_array($subs_array) && count($subs_array)>0) {
             foreach($subs_array as $block=>$data) {
-                $html.='<tr class="liste_titre">';
-                $html.='<td colspan="2">';
-                $html.=$block;
-                $html.='</td>';
-                $html.='</tr>';
-                $html.='<tr class="liste_titre">';
-                $html.='<td width="50px">';
-                $html.=$langs->trans('RefLtrTag');
-                $html.='</td>';
-                $html.='<td>';
-                $html.=$langs->trans('Value');
-                $html.='</td>';
-                $html.='</tr>';
-                if (count($data)>0) {
-                    $var=true;
-                    foreach($data as $key=>$value) {
-                        $html.="<tr class=\"oddeven\">";
-                        $html.='<td class="referenceletter-substitutionkey">';
-                        $html.='{'.$key.'}';
-                        $html.='</td>';
-                        $html.='<td>';
-                        $html.=$value;
-                        $html.='</td>';
-                        $html.='</tr>';
+                $html .= '<h3 class="accordion-refltertags-title" >' . $block . '</h3>';
+
+                $html .= '<div class="accordion-refltertags-body" >';
+                $html .= '<table>';
+                $html .= '<tr class="liste_titre">';
+                $html .= '<th>'.$langs->trans('Description').'</th>';
+                $html .= '<th width="50px">'.$langs->trans('RefLtrTag').'</th>';
+                $html .= '<th>'.$langs->trans('Value').'</th>';
+                $html .= '</tr>';
+                if (is_array($data) && count($data) > 0) {
+                    $var = true;
+                    foreach ($data as $key => $value) {
+                        $html .= '<tr class="oddeven searchable">';
+                        $html .= '    <td class="referenceletter-substitutionkey-desc">';
+                        if (!empty($langs->tab_translate['reflettershortcode_' . $key])) {   // Translation is available
+
+                            $html .= '        <span class="referenceletter-substitutionkey classfortooltip" title="' . $langs->trans('ClickToAddOnEditor') . '" data-shortcode="{' . $key . '}" >';
+                            $html .= $langs->trans('reflettershortcode_' . $key);
+                            $html .= '</span>';
+                        }
+                        $html .= '    </td>';
+                        $html .= '    <td class="referenceletter-substitutionkey-col">';
+                        $html .= '        <span class="referenceletter-substitutionkey classfortooltip" title="' . $langs->trans('ClickToAddOnEditor') . '"  data-shortcode="{' . $key . '}"  >{' . $key . '}</span>';
+                        $html .= '    </td>';
+                        $html .= '    <td>';
+                        $html .= $value;
+                        $html .= '    </td>';
+                        $html .= '</tr>';
+                    }
+                }
+                $html .= '</table>';
+                $html .= '</div>';
+            }
+
+            // Generate traduction for dev only
+            /*print '<pre>';
+            foreach($subs_array as $block=>$data) {
+                print '#' . $block."\n";
+                if (is_array($data) && count($data) > 0) {
+                    $var = true;
+                    foreach ($data as $key => $value) {
+                        print 'reflettershortcode_' . $key."=\n";
                     }
                 }
             }
+            print '</pre>';*/
         }
 
-        $html.='</table>';
+        $html.='</div>';
+        $html.='</div>';
 
         return $html;
     }
