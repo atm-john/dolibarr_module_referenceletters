@@ -248,11 +248,11 @@ class FormReferenceLetters extends Form
 	 * @param User $user
 	 * @param CommonObject $object
 	 */
-	public function displaySubtitutionKey($user,$reflettersobject) {
+	public function displaySubstitutionKey($user,$reflettersobject) {
 		global $langs,$bc;
 
         $form = new Form($this->db);
-		$html=$this->getSubtitutionKeyTable($user,$reflettersobject);
+		$html=$this->getSubstitutionKeyTable($user,$reflettersobject);
 
 		return $form->textwithpicto($langs->trans("RefLtrDisplayTag"), $html, 1, 'help', '', 0, 2, 'refltertags');
 	}
@@ -264,11 +264,11 @@ class FormReferenceLetters extends Form
      * @param User $user
      * @param CommonObject $object
      */
-    public function getSubtitutionKeyTable($user,$reflettersobject){
+    public function getSubstitutionKeyTable($user,$reflettersobject){
         global $langs,$bc;
 
 
-        $subs_array=$reflettersobject->getSubtitutionKey($user);
+        $subs_array=$reflettersobject->getSubstitutionKey($user);
 
         $html='<table id="refltertags" >';
 
@@ -291,7 +291,7 @@ class FormReferenceLetters extends Form
                     $var=true;
                     foreach($data as $key=>$value) {
                         $html.="<tr class=\"oddeven\">";
-                        $html.='<td class="referenceletter-subtitutionkey">';
+                        $html.='<td class="referenceletter-substitutionkey">';
                         $html.='{'.$key.'}';
                         $html.='</td>';
                         $html.='<td>';

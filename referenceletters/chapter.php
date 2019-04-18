@@ -277,7 +277,7 @@ if (($action == 'create' || $action=='edit' || $action=='delete') && $user->righ
 		print $langs->trans('RefLtrTag');
 		print '</td>';
 		print '<td>';
-		print $formrefleter->displaySubtitutionKey($user,$object_refletter);
+		print $formrefleter->displaySubstitutionKey($user,$object_refletter);
 		print '</td>';
 		print '</tr>';
 

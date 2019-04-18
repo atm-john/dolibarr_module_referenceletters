@@ -117,7 +117,7 @@ if(!empty($object->id)) {
 	print $langs->trans('RefLtrTag');
 	print '</td>';
 	print '<td>';
-	print $formrefleter->displaySubtitutionKey($user,$object);
+	print $formrefleter->displaySubstitutionKey($user,$object);
 	print '</td>';
 	print '</tr>';
 

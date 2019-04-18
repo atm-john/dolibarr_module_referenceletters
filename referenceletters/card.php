@@ -45,7 +45,7 @@ restrictedArea($user, 'referenceletters');
 
 // Load translation files required by the page
 $langs->load("referenceletters@referenceletters");
-$langs->load("refflettersubtitution@referenceletters");
+$langs->load("refflettersubstitution@referenceletters");
 
 
 $object = new ReferenceLetters($db);
@@ -448,7 +448,7 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
 		            if(!empty($conf->global->DOCEDIT_CHAPTERS_INLINE_EDITION)){ 
 		                print '<span class="docedit_infos_icon docedit_save classfortooltip" data-target="#chapter_body_text_'.$line_chapter->id.'"  ><span class="fa fa-save marginleftonly valignmiddle" style=" color: #444;" alt="'.$langs->trans('Save').'" title="'.$langs->trans('Save').'"></span></span>';
 
-						print '<span class="docedit_infos_icon docedit_shortcode classfortooltip" data-target="#chapter_body_text_'.$line_chapter->id.'"  ><span class="fa fa-code marginleftonly valignmiddle" style=" color: #444;" alt="'.$langs->trans('DisplaySubtitutionTable').'" title="'.$langs->trans('DisplaySubtitutionTable').'"></span></span>';
+						print '<span class="docedit_infos_icon docedit_shortcode classfortooltip" data-target="#chapter_body_text_'.$line_chapter->id.'"  ><span class="fa fa-code marginleftonly valignmiddle" style=" color: #444;" alt="'.$langs->trans('DisplaySubstitutionTable').'" title="'.$langs->trans('DisplaySubstitutionTable').'"></span></span>';
 
 		            }
 		            
@@ -681,7 +681,7 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
 
 		    print '} );</script>';
 
-            print '<div id="subtitutionkey" style="display: none;" >';
+            print '<div id="substitutionkey" style="display: none;" >';
 
             print '<div class="search-filter-wrap"  >';
             print '<i class="fa fa-search"></i>';
@@ -690,7 +690,7 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
             print '</div>';
 
 
-            $subs_array=$object->getSubtitutionKey($user);
+            $subs_array=$object->getSubstitutionKey($user);
 
             $html='<div id="accordion-refltertags" >';
 
@@ -709,16 +709,16 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
                         $var = true;
                         foreach ($data as $key => $value) {
                             $html .= '<tr class="oddeven searchable">';
-                            $html .= '    <td class="referenceletter-subtitutionkey-desc">';
+                            $html .= '    <td class="referenceletter-substitutionkey-desc">';
                             if (!empty($langs->tab_translate['reflettershortcode_' . $key])) {   // Translation is available
 
-                                $html .= '        <span class="referenceletter-subtitutionkey classfortooltip" title="' . $langs->trans('ClickToAddOnEditor') . '" data-shortcode="{' . $key . '}" >';
+                                $html .= '        <span class="referenceletter-substitutionkey classfortooltip" title="' . $langs->trans('ClickToAddOnEditor') . '" data-shortcode="{' . $key . '}" >';
                                 $html .= $langs->trans('reflettershortcode_' . $key);
                                 $html .= '</span>';
                             }
                             $html .= '    </td>';
-                            $html .= '    <td class="referenceletter-subtitutionkey-col">';
-                            $html .= '        <span class="referenceletter-subtitutionkey classfortooltip" title="' . $langs->trans('ClickToAddOnEditor') . '"  data-shortcode="{' . $key . '}"  >{' . $key . '}</span>';
+                            $html .= '    <td class="referenceletter-substitutionkey-col">';
+                            $html .= '        <span class="referenceletter-substitutionkey classfortooltip" title="' . $langs->trans('ClickToAddOnEditor') . '"  data-shortcode="{' . $key . '}"  >{' . $key . '}</span>';
                             $html .= '    </td>';
                             $html .= '    <td>';
                             $html .= $value;
@@ -756,8 +756,8 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
                             active: false
                     });
                     
-                    $( "#subtitutionkey" ).dialog({
-                      title: "'.$langs->transnoentities('RefSubtitutionTable').'",
+                    $( "#substitutionkey" ).dialog({
+                      title: "'.$langs->transnoentities('RefSubstitutionTable').'",
                       width: $( document ).width() * 0.9,
                       modal: true,
                       autoOpen: false,
@@ -768,17 +768,17 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
                     $(".docedit_shortcode").click(function() {
                         
                          // open dialog and add target key
-                         $( "#subtitutionkey" ).data("target", $(this).data("target"));
-                         $( "#subtitutionkey" ).dialog( "open" );
+                         $( "#substitutionkey" ).data("target", $(this).data("target"));
+                         $( "#substitutionkey" ).dialog( "open" );
                          
                          // Focus on search input
                          $("#item-filter").focus();
                     });
                     
                     
-                   $(".referenceletter-subtitutionkey").click(function(btnshortcode) {
+                   $(".referenceletter-substitutionkey").click(function(btnshortcode) {
 
-                        var shortcodeTarget = $($("#subtitutionkey").data("target"));
+                        var shortcodeTarget = $($("#substitutionkey").data("target"));
                         
                         if(CKEDITOR.instances[shortcodeTarget.attr("id")] != undefined)
                         {
@@ -795,7 +795,7 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
 
                             }
                             
-                            $( "#subtitutionkey" ).dialog( "close" );
+                            $( "#substitutionkey" ).dialog( "close" );
                         }
                         else{
                             console.log("shortcodeTarget notfound");
@@ -805,7 +805,7 @@ if ($action == 'create' && $user->rights->referenceletters->write) {
                    $( document ).on("keyup", "#item-filter", function () {
 
                         var filter = $(this).val(), count = 0;
-                        $("#subtitutionkey tr.searchable").each(function () {
+                        $("#substitutionkey tr.searchable").each(function () {
                        
                             if ($(this).text().search(new RegExp(filter, "i")) < 0) {
                                 $(this).hide();

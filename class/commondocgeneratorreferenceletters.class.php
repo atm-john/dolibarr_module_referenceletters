@@ -417,7 +417,7 @@ class CommonDocGeneratorReferenceLetters extends CommonDocGenerator
 	}
 
 	/**
-	 * Define array with couple subtitution key => subtitution value
+	 * Define array with couple substitution key => substitution value
 	 *
 	 * @param Object $object Dolibarr Object
 	 * @param Translate $outputlangs Language object for output

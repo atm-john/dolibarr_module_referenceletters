@@ -576,7 +576,7 @@ class ReferenceLetters extends CommonObject
 	 * @return string translated element label
 	 *
 	 */
-	public function getSubtitutionKey($user) {
+	public function getSubstitutionKey($user) {
 		global $conf, $langs, $mysoc;
 
 		require_once 'commondocgeneratorreferenceletters.class.php';
@@ -667,12 +667,12 @@ class ReferenceLetters extends CommonObject
 			);
 		}
 
-		if(!empty($conf->agefodd->enabled)) $this->completeSubtitutionKeyArrayWithAgefoddData($subst_array);
+		if(!empty($conf->agefodd->enabled)) $this->completeSubstitutionKeyArrayWithAgefoddData($subst_array);
 
 		return $subst_array;
 	}
 
-	public function completeSubtitutionKeyArrayWithAgefoddData(&$subst_array) {
+	public function completeSubstitutionKeyArrayWithAgefoddData(&$subst_array) {
 
 		global $langs;
 
